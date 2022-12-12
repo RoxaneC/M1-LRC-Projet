@@ -142,6 +142,7 @@ programme :- 	premiere_etape(Tbox,Abi,Abr),
 				deuxieme_etape(Abi,Abi1,Tbox),
 				troisieme_etape(Abi1,Abr).
 
+
 % 1.
 % Création des listes codants les A-Box et T-Box
 
@@ -166,7 +167,16 @@ suite(2,Abi,Abi1,Tbox) :- 	acquisition_prop_type2(Abi,Abi1,Tbox), !.
 suite(R,Abi,Abi1,Tbox) :- 	nl, write('Cette reponse est incorrecte.'), nl,
 			saisie_et_traitement_prop_a_demontrer(Abi,Abi1,Tbox).
 
-%% code fait
+
+%%
+remplace(CA, CA) :- cnamea(CA), !.
+remplace(CNA, CA) :- equiv(CNA, CA), !.
+remplace(not(CNA), not(CA)) :- 	remplace(CNA, CA), !.
+remplace(or(CNA1, CNA2), or(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
+remplace(and(CNA1, CNA2), and(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
+remplace(some(CNA1, CNA2), some(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
+remplace(all(CNA1, CNA2), all(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
+
 % I : C  (ajout d'une instance)
 acquisition_prop_type1(Abi,Abi1,Tbox) :- 
 			nl, write('Entrez le nom de l"instance que vous souhaitez tester :'), nl,
@@ -176,14 +186,6 @@ acquisition_prop_type1(Abi,Abi1,Tbox) :-
 			remplace(C, CA),
 			nnf(not(CA), NCA),
 			concat(Abi, [(I,NCA)], Abi1), !.
-
-remplace(CA, CA) :- cnamea(CA), !.
-remplace(CNA, CA) :- equiv(CNA, CA), !.
-remplace(not(CNA), not(CA)) :- 	remplace(CNA, CA), !.
-remplace(or(CNA1, CNA2), or(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
-remplace(and(CNA1, CNA2), and(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
-remplace(some(CNA1, CNA2), some(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
-remplace(all(CNA1, CNA2), all(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
 
 
 % C1 et C2
