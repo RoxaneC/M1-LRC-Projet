@@ -35,7 +35,7 @@ complete_some([ (I1,some(R,C)) | Lie], Lpt, Li, Lu, Ls, Abr) :-	genere(I2),
 
 
 % Cas de "et"
-transformation_and(Lie, Lpt, [], Lu, Ls, Abr) :-	deduction_all(Lie,Lpt,Li,Lu,Ls,Abr), !
+transformation_and(Lie, Lpt, [], Lu, Ls, Abr) :-	deduction_all(Lie,Lpt,Li,Lu,Ls,Abr), !.
 transformation_and(Lie, Lpt, [ (I,and(C1,C2)) | Li], Lu, Ls, Abr) :- 
 			evolue((I,C1), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
 			evolue((I,C2), Lie1, Lpt1, Li1, Lu1, Ls1, Lie2, Lpt2, Li2, Lu2, Ls2),
