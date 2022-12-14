@@ -58,7 +58,15 @@ evolue((I,not(C)), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1) :- 		concat(
 
 resolution(Lie, Lpt, Li, Lu, Ls, Abr) :- 	.
 
-deduction_all(Lie,Lpt,Li,Lu,Ls,Abr) :- 	.
+
+deduction_all(Lie, [ (I1,all(R,C)) | Lpt], Li, Lu, Ls, Abr) :- 	
+			member((I1,I2,R), Abr),
+			
+			evolue((I2,C), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
+			
+			deduction_all(Lie1, Lpt, Li1, Lu1, Ls1, Abr), !.
+
+
 
 transformation_or(Lie,Lpt,Li,Lu,Ls,Abr) :- 	.
 
