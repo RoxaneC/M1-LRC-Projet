@@ -46,7 +46,7 @@ nombre(X,L1) :-	R is (X mod 10),
 				char_code(R1,R2),
 				nombre(Q,L),
 				concat(L,[R2],L1).
-transformation_and(Lie,Lpt,Li,Lu,Ls,Abr)
+
 chiffre_car(0,'0').
 chiffre_car(1,'1').
 chiffre_car(2,'2').
