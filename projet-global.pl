@@ -123,29 +123,29 @@ autoref(C, all(R,B)) :-	autoref(C,B), !.
 
 
 % Traitements
-%% Développement des concepts non atomique en definition de concept atomique
-developper(CA,CA) :- cnamea(CA).
-developper(CNA, DCA) :- equiv(CNA,D), developper(D,DCA), !.
-developper(not(CNA), not(DCA)) :- developper(CNA,DCA), !.
-developper(and(CNA1,CNA2), and(DCA1,DCA2)) :- developper(CNA1,DCA1), developper(CNA2,DCA2), !.
-developper(or(CNA1,CNA2), or(DCA1,DCA2)) :- developper(CNA1,DCA1), developper(CNA2,DCA2), !.
-developper(some(R,CNA), some(R,DCA)) :- developper(CNA,DCA), !.
-developper(all(R,CNA), all(R,DCA)) :- developper(CNA,DCA), !.
+%% Remplace les concepts non atomique en definition de concept atomique
+remplace(CA, CA) :- cnamea(CA), !.
+remplace(CNA, DCA) :- equiv(CNA, D), remplace(D, DCA) !.
+remplace(not(CNA), not(CA)) :- 	remplace(CNA, CA), !.
+remplace(or(CNA1, CNA2), or(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
+remplace(and(CNA1, CNA2), and(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
+remplace(some(R, CNA), some(R, CA)) :- 	remplace(CNA, CA), !.
+remplace(all(R, CNA), all(R, CA)) :- 	remplace(CNA, CA), !.
 
 
 traitement_Tbox([], []).
 traitement_Tbox([(C,D) | Tbox], [(NC,ND) | L]) :- 	concept(C), concept(D),
-													developper(C,CA), developper(D,DA),
+													remplace(C,CA), remplace(D,DA),
 													nnf(CA, NC), nnf(DA,ND),
 													traitement_Tbox(Tbox, L), !.
 
-
+traitement_AboxI([], []).
 traitement_AboxI([(I,C) | Abox], [(I,NC) | L] ) :-	instance(I), concept(C),
-													developper(C,CA),
+													remplace(C,CA),
 													nnf(CA, NC),
-													traitement_AboxI(Abox), !.
+													traitement_AboxI(Abox, L), !.
 
-
+traitement_AboxR([]).
 traitement_AboxR([(I1,I2,R) | Abox]) :-	instance(I1), instance(I2), role(R),
 										traitement_AboxR(Abox), !.
 
@@ -166,12 +166,11 @@ programme :- 	premiere_etape(Tbox,Abi,Abr),
 
 premiere_etape(Tbox,Abi,Abr):- 	setof((C, D), equiv(C, D), T), traitement_Tbox(T,Tbox),
 								setof((I, C), inst(I, C), Ai), traitement_AboxI(Ai,Abi),
-								setof((I1, I2, R), instR(I1, I2, R), Ar), traitement_AboxR(Ar,Abr), !.
+								setof((I1, I2, R), instR(I1, I2, R), Abr), traitement_AboxR(Abr), !.
 
 
 % 2.
-%% Code donné
-
+%% CODE DONNÉ
 deuxieme_etape(Abi,Abi1,Tbox) :- 	saisie_et_traitement_prop_a_demontrer(Abi,Abi1,Tbox).
 
 saisie_et_traitement_prop_a_demontrer(Abi,Abi1,Tbox) :-
@@ -187,7 +186,7 @@ suite(R,Abi,Abi1,Tbox) :- 	nl, write('Cette reponse est incorrecte.'), nl,
 
 
 
-%% code fait
+%% 
 % I : C  (ajout d'une instance)
 acquisition_prop_type1(Abi,Abi1,Tbox) :- 
 			nl, write('Entrez le nom de l"instance que vous souhaitez tester :'), nl,
@@ -197,14 +196,6 @@ acquisition_prop_type1(Abi,Abi1,Tbox) :-
 			remplace(C, CA),
 			nnf(not(CA), NCA),
 			concat(Abi, [(I,NCA)], Abi1), !.
-
-remplace(CA, CA) :- cnamea(CA), !.
-remplace(CNA, CA) :- equiv(CNA, CA), !.
-remplace(not(CNA), not(CA)) :- 	remplace(CNA, CA), !.
-remplace(or(CNA1, CNA2), or(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
-remplace(and(CNA1, CNA2), and(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
-remplace(some(CNA1, CNA2), some(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
-remplace(all(CNA1, CNA2), all(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
 
 
 % C1 et C2
@@ -228,15 +219,15 @@ acquisition_prop_type2(Abi,Abi1,Tbox) :-
 
 compteur(1).
 
-%% Donné
-
+%% CODE DONNÉ
 troisieme_etape(Abi,Abr) :-	tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls),
 							resolution(Lie,Lpt,Li,Lu,Ls,Abr), nl,
 							write('Youpiiiiii, on a demontre la proposition initiale !!!').
 
 %% A FAIRE
 
-tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls) :-	.
+tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls) :-	setof()
+									, !.
 
 resolution(Lie,Lpt,Li,Lu,Ls,Abr) :- 	.
 
