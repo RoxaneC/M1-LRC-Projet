@@ -16,13 +16,13 @@ troisieme_etape(Abi,Abr) :-	tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls),
 
 
 % Tri de la A_Box étendue
-tri_Abox([], [], [], [], [], []).
-tri_Abox([ (I,some(R,C)) | Abi], [ (I,some(R,C)) | Lie], Lpt, Li, Lu, Ls) :-	tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls), !.
-tri_Abox([ (I,all(R,C)) | Abi], Lie, [ (I,all(R,C)) | Lpt], Li, Lu, Ls) :-		tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls), !.
-tri_Abox([ (I,and(C1,C2)) | Abi], Lie, Lpt, [ (I,and(C1,C2)) | Li], Lu, Ls) :-	tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls), !.
-tri_Abox([ (I,or(C1,C2)) | Abi], Lie, Lpt, Li, [ (I,or(C1,C2)) | Lu], Ls) :-	tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls), !.
-tri_Abox([ (I,C) | Abi], Lie, Lpt, Li, Lu, [ (I,C) | Ls]) :-					tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls), !.
-tri_Abox([ (I,not(C)) | Abi], Lie, Lpt, Li, Lu, [ (I,not(C)) | Ls]) :-			tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls), !.
+tri_Abox([], Lie, Lpt, Li, Lu, Ls).
+tri_Abox([ (I,some(R,C)) | Abi], [ (I,some(R,C)) | Lie], Lpt, Li, Lu, Ls) :-	tri_Abox(Abi, Lie, Lpt, Li, Lu, Ls), !.
+tri_Abox([ (I,all(R,C)) | Abi], Lie, [ (I,all(R,C)) | Lpt], Li, Lu, Ls) :-		tri_Abox(Abi, Lie, Lpt, Li, Lu, Ls), !.
+tri_Abox([ (I,and(C1,C2)) | Abi], Lie, Lpt, [ (I,and(C1,C2)) | Li], Lu, Ls) :-	tri_Abox(Abi, Lie, Lpt, Li, Lu, Ls), !.
+tri_Abox([ (I,or(C1,C2)) | Abi], Lie, Lpt, Li, [ (I,or(C1,C2)) | Lu], Ls) :-	tri_Abox(Abi, Lie, Lpt, Li, Lu, Ls), !.
+tri_Abox([ (I,C) | Abi], Lie, Lpt, Li, Lu, [ (I,C) | Ls]) :-					tri_Abox(Abi, Lie, Lpt, Li, Lu, Ls), !.
+tri_Abox([ (I,not(C)) | Abi], Lie, Lpt, Li, Lu, [ (I,not(C)) | Ls]) :-			tri_Abox(Abi, Lie, Lpt, Li, Lu, Ls), !.
 
 
 % Cas de "il existe"
@@ -61,7 +61,7 @@ transformation_or(Lie, Lpt, Li, [ (I,or(C1,C2)) | Lu], Ls, Abr) :-
 			resolution(Lie2, Lpt2, Li2, Lu2, Ls2, Abr), !.
 
 
-% Modification
+% Modification et mise à jour des listes
 evolue([], Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls).
 evolue([Elem | L], Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1) :- 
 			evolue(Elem, Lie, Lpt, Li, Lu, Ls, Lie2, Lpt2, Li2, Lu2, Ls2),
@@ -75,13 +75,44 @@ evolue((I,C), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls1) :- 			concat([ (I,C) 
 evolue((I,not(C)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls1) :- 		concat([ (I,not(C)) ], Ls, Ls1), !.
 
 
+% Affichage
+affiche_evolution_Abox(Ls1, Lie1, Lpt1, Li1, Lu1, Abr1, Ls2, Lie2, Lpt2, Li2, Lu2, Abr2):-
+	write('Etat Départ :'),nl,
+	affiche(Ls1),
+	affiche(Lie1),
+	affiche(Lpt1),
+	affiche(Li1),
+	affiche(Lu1),
+	affiche(Abr1),
+	nl,
+	write('Etat Arrivée :'),nl,
+	affiche(Ls2),
+	affiche(Lie2),
+	affiche(Lpt2),
+	affiche(Li2),
+	affiche(Lu2),
+	affiche(Abr2),
+	nl.
+
+
+% affichage
+affiche((I,some(R,C))) :-	write(I), write(' : ∃ '),
+							write(R), write('.'), write(C), !.
+affiche((I,all(R,C))) :-	write(I), write(' : ∀ '),
+							write(R), write('.'), write(C), !.
+affiche((I,and(C1,C2))) :-	write(I), write(' : '),
+							write(C1), write(' ⊓ '), write(C2), !.
+affiche((I,or(C1,C2))) :-	write(I), write(' : '),
+							write(C1), write(' ⊔ '), write(C2), !.
+
+% récursivité
+affiche([Elem | L]) :-	affiche(Elem), write(', '),
+						affiche(L), !.
+
 
 
 %% A FAIRE
 
 resolution(Lie, Lpt, Li, Lu, Ls, Abr) :- 	.
-
-
-affiche_evolution_Abox(Ls1, Lie1, Lpt1, Li1, Lu1, Abr1, Ls2, Lie2, Lpt2, Li2, Lu2, Abr2) :- .
 
 clash() :- .
