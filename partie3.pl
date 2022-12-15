@@ -30,16 +30,16 @@ tri_Abox([ (I,not(C)) | Abi], Lie, Lpt, Li, Lu, [ (I,not(C)) | Ls]) :-			tri_Abo
 
 % Résolution par les différentes étapes
 
-resolution(Lie, Lpt, Li, Lu, Ls, Abr) :-	not(clash(Ls)), complete_some(Lie, Lpt, Li, Lu, Ls, Abr), !.
-resolution([], Lpt, Li, Lu, Ls, Abr) :-	not(clash(Ls)), transformation_and([], Lpt, Li, Lu, Ls, Abr), !.
-resolution([], Lpt, [], Lu, Ls, Abr) :-	not(clash(Ls)), deduction_all([], Lpt, [], Lu, Ls, Abr), !.
-resolution([], [], [], Lu, Ls, Abr):-	not(clash(Ls)), transformation_or([], [], [], Lu, Ls, Abr), !.
-resolution([], [], [], [], Ls, Abr):-	not(clash(Ls)).
+resolution(Lie, Lpt, Li, Lu, Ls, Abr) :-	pas_clash(Ls), complete_some(Lie, Lpt, Li, Lu, Ls, Abr), !.
+resolution([], Lpt, Li, Lu, Ls, Abr) :-	pas_clash(Ls), transformation_and([], Lpt, Li, Lu, Ls, Abr), !.
+resolution([], Lpt, [], Lu, Ls, Abr) :-	pas_clash(Ls), deduction_all([], Lpt, [], Lu, Ls, Abr), !.
+resolution([], [], [], Lu, Ls, Abr):-	pas_clash(Ls), transformation_or([], [], [], Lu, Ls, Abr), !.
+resolution([], [], [], [], Ls, Abr):-	pas_clash(Ls), !.
 
 % Vérifie la présence d'un clash
 
-clash([]).
-clash([(I,C) | Ls]) :-	member((I,not(C)), Ls), clash(Ls).
+pas_clash([]).
+pas_clash([(I,C) | Ls]) :-	not(member((I,not(C)), Ls)), pas_clash(Ls), !.
 
 
 % Cas "il existe"
