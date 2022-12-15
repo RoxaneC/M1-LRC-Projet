@@ -4,8 +4,8 @@
 %%                               %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Définit les identificateurs
-
+%% CODE DONNÉ
+% Définition des identificateurs
 
 cnamea(personne).
 cnamea(livre).
@@ -38,8 +38,7 @@ equiv(auteur,and(personne,some(aEcrit,livre))).
 equiv(editeur,and(personne,and(not(some(aEcrit,livre)),some(aEdite,livre)))).
 equiv(parent,and(personne,some(aEnfant,anything))).
 
-% Liste de doublets codant la T-Box
-%
+% Représentation de la T-Box telle qu'elle sera utilisée dans le programme
 % [(sculpteur,and(personne,some(aCree,sculpture))), (auteur,and(personne,some(aEcrit,livre))),(editeur,and(personne,and(not(some(aEcrit,livre)),some(aEdite,livre)))),(parent,and(personne,some(aEnfant,anything)))]
 
 
@@ -55,51 +54,43 @@ instR(michelAnge, david, aCree).
 instR(michelAnge, sonnets, aEcrit).
 instR(vinci, joconde, aCree).
 
-% Liste de n-uplets codant les assertions de concepts (A-Box) :
-%
+% Représentation de la A-Box des assertions de concepts telle qu'elle sera utilisée dans le programme
 % [(michelAnge,personne), (david,sculpture), (sonnets,livre),(vinci,personne), (joconde,objet)]
 %
-% Liste de n-uplets codant les assertions de rôles (A-Box) :
-%
+% Représentation de la A-Box des assertions de rôles telle qu'elle sera utilisée dans le programme
 % [(michelAnge, david, aCree), (michelAnge, sonnet, aEcrit),(vinci,joconde, aCree)]
+%%
 
 
-% Correction semantique ???
+% Correction syntaxique et sémantique
+% Permet de vérifier que les concepts, les rôles et les instances existent dans nos Box
 
-setof(X, cnamea(X), L).
-setof(X, cnamena(X), L).
-setof(X, iname(X), L).
-setof(X, rname(X), L).
+concept(C) :-	cnamea(C), !.
+concept(C) :-	cnamena(C), !.
+concept(not(C)) :-	concept(C), !.
+concept(or(C1,C2)) :-	concept(C1), concept(C2), !.
+concept(and(C1,C2)) :-	concept(C1), concept(C2), !.
+concept(some(R,C)) :-	role(R), concept(C), !.
+concept(all(R,C)) :-	role(R), concept(C), !.
 
-
-% Correction syntaxique
-% On verifie que les concepts & les rôles en sont bien
-
-concept(C) :- cnamea(C), !.
-concept(C) :- cnamena(C), !.
-concept(not(C)) :- concept(C), !.
-concept(or(C1,C2)) :- concept(C1), concept(C2), !.
-concept(and(C1,C2)) :- concept(C1), concept(C2), !.
-concept(some(R,C)) :- role(R), concept(C), !.
-concept(all(R,C)) :- role(R), concept(C), !.
-
-instance(I) :- iname(I), !.		% verification
-role(R) :- rname(R), !.
+instance(I) :-	iname(I), !.
+role(R) :-	rname(R), !.
 
 
 % On verifie qu'il n'y a pas de cycle
-%% //?!?\\
 
 autoref(C, C).
-% autoref(C, D) :- autoref(C,D), developper(C,D), !.
+autoref(C, D) :- autoref(C,D), developper(C,D), !.
 autoref(C, and(A,B)) :-	autoref(C,A), autoref(C,B), !.
 autoref(C, or(A,B)) :-	autoref(C,A), autoref(C,B), !.
 autoref(C, some(R,B)) :-	autoref(C,B), !.
 autoref(C, all(R,B)) :-	autoref(C,B), !.
 
 
-% Traitements
-%% Remplace les concepts non atomique en definition de concept atomique
+%%% Traitements
+
+% Remplace les concepts non atomiques par une definition formée uniquement de concepts atomiques
+
 remplace(CA, CA) :- cnamea(CA), !.
 remplace(CNA, DCA) :- equiv(CNA, D), remplace(D, DCA) !.
 remplace(not(CNA), not(CA)) :- 	remplace(CNA, CA), !.
@@ -109,19 +100,33 @@ remplace(some(R, CNA), some(R, CA)) :- 	remplace(CNA, CA), !.
 remplace(all(R, CNA), all(R, CA)) :- 	remplace(CNA, CA), !.
 
 
+% Traitement de la T-Box comme demandé :
+% - développement des concepts en formes atomiques
+% - verification sémentique et syntaxique
+% - mise sous nnf
+
 traitement_Tbox([], []).
 traitement_Tbox([(C,D) | Tbox], [(NC,ND) | L]) :- 	concept(C), concept(D),
 													remplace(C,CA), remplace(D,DA),
 													nnf(CA, NC), nnf(DA,ND),
 													traitement_Tbox(Tbox, L), !.
 
+
+% Traitement de la A-Box des assertions de concepts comme demandé :
+% - développement des concepts en formes atomiques
+% - verification sémentique et syntaxique
+% - mise sous nnf
+
 traitement_AboxI([], []).
-traitement_AboxI([(I,C) | Abox], [(I,NC) | L] ) :-	instance(I), concept(C),
+traitement_AboxI([(I,C) | AboxI], [(I,NC) | L] ) :-	instance(I), concept(C),
 													remplace(C,CA),
 													nnf(CA, NC),
-													traitement_AboxI(Abox, L), !.
+													traitement_AboxI(AboxI, L), !.
+
+
+% Traitement de la A-Box des assertions de rôles comme demandé :
+% - verification sémentique et syntaxique
 
 traitement_AboxR([]).
-traitement_AboxR([(I1,I2,R) | Abox]) :-	instance(I1), instance(I2), role(R),
-										traitement_AboxR(Abox), !.
-
+traitement_AboxR([(I1,I2,R) | AboxR]) :-	instance(I1), instance(I2), role(R),
+										traitement_AboxR(AboxR), !.
