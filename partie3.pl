@@ -108,6 +108,7 @@ affiche((I,C)) :-	write(I), write(' : '), write(C1), !.
 affiche((I,not(C))) :-	write(I), write(' : ¬'), write(C), !.
 
 % récursivité
+affiche([]) :-	nl.
 affiche([Elem | L]) :-	affiche(Elem), write(', '),
 						affiche(L), !.
 
