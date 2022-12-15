@@ -80,7 +80,7 @@ role(R) :-	rname(R), !.
 % On verifie qu'il n'y a pas de cycle
 
 autoref(C, C).
-autoref(C, D) :- autoref(C,DA), developper(D,DA), !.
+autoref(C, equiv(C,D)) :- remplace(D,DA), autoref(C,DA), !.
 autoref(C, and(A,B)) :-	autoref(C,A), autoref(C,B), !.
 autoref(C, or(A,B)) :-	autoref(C,A), autoref(C,B), !.
 autoref(C, some(R,B)) :-	autoref(C,B), !.
