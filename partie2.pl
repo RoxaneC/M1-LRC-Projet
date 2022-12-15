@@ -48,7 +48,6 @@ acquisition_prop_type1(Abi,Abi1,Tbox) :-
 
 
 % C1 et C2
-
 acquisition_prop_type2(Abi,Abi1,Tbox) :- 	
 			nl, write('Entrez premier concept que vous souhaitez tester :'), nl,
 			read(C1), concept(C1), remplace(C1, CA1),

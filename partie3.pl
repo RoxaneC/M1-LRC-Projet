@@ -31,25 +31,48 @@ complete_some([ (I1,some(R,C)) | Lie], Lpt, Li, Lu, Ls, Abr) :-	genere(I2),
 
 			evolue((I2,C), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
 			
-			complete_some(Lie, Lpt1, Li1, Lu1, Ls1, [ (I1, I2, R) | Abr]), !.
+			resolution(Lie1, Lpt1, Li1, Lu1, Ls1, [ (I1, I2, R) | Abr]), !.
 
 
 % Cas de "et"
 transformation_and(Lie, Lpt, [], Lu, Ls, Abr) :-	deduction_all(Lie,Lpt,Li,Lu,Ls,Abr), !.
 transformation_and(Lie, Lpt, [ (I,and(C1,C2)) | Li], Lu, Ls, Abr) :- 
-			evolue((I,C1), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
-			evolue((I,C2), Lie1, Lpt1, Li1, Lu1, Ls1, Lie2, Lpt2, Li2, Lu2, Ls2),
+			evolue([(I,C1), (I,C2)], Lie, Lpt, Li, Lu, Ls1, Lie1, Lpt1, Li1, Lu1, Ls1),
 			
-			transformation_and(Lie2, Lpt2, Li, Lu2, Ls2, Abr), !.
+			resolution(Lie1, Lpt1, Li1, Lu1, Ls1, Abr), !.
 
 
-% Modification 
-evolue((I,some(R,C)), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1) :- 	concat([ (I,some(R,C)) ], Lie, Lie1), !.
-evolue((I,all(R,C)), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1) :- 	concat([ (I,all(R,C)) ], Lpt, Lpt1), !.
-evolue((I,and(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1) :- 	concat([ (I,and(C1,C2)) ], Li1, Li1), !.
-evolue((I,or(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1) :- 	concat([ (I,or(C1,C2)) ], Lu, Lu1), !.
-evolue((I,C), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1) :- 			concat([ (I,C) ], Ls, Ls1), !.
-evolue((I,not(C)), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1) :- 		concat([ (I,not(C)) ], Ls, Ls1), !.
+% Cas de "pour tout"
+%% recursivité de member ? A revoir
+deduction_all(Lie, [ (I1,all(R,C)) | Lpt], Li, Lu, Ls, Abr) :- 	
+			member((I1,I2,R), Abr),
+			
+			evolue((I2,C), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
+			
+			resolution(Lie1, Lpt, Li1, Lu1, Ls1, Abr), !.
+
+
+% Cas de "ou"
+transformation_or(Lie, Lpt, Li, [ (I,or(C1,C2)) | Lu], Ls, Abr) :-	
+			evolue((I,C1), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
+			evolue((I,C2), Lie, Lpt, Li, Lu, Ls, Lie2, Lpt2, Li2, Lu2, Ls2),
+			
+			resolution(Lie1, Lpt1, Li1, Lu1, Ls1, Abr),
+			resolution(Lie2, Lpt2, Li2, Lu2, Ls2, Abr), !.
+
+
+% Modification
+evolue([], Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls).
+evolue([Elem | L], Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1) :- 
+			evolue(Elem, Lie, Lpt, Li, Lu, Ls, Lie2, Lpt2, Li2, Lu2, Ls2),
+			evolue(L, Lie2, Lpt2, Li2, Lu2, Ls2, Lie1, Lpt1, Li1, Lu1, Ls1), !.
+
+evolue((I,some(R,C)), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt, Li, Lu, Ls) :- 	concat([ (I,some(R,C)) ], Lie, Lie1), !.
+evolue((I,all(R,C)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt1, Li, Lu, Ls) :- 	concat([ (I,all(R,C)) ], Lpt, Lpt1), !.
+evolue((I,and(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li1, Lu, Ls) :- 	concat([ (I,and(C1,C2)) ], Li1, Li1), !.
+evolue((I,or(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu1, Ls) :- 	concat([ (I,or(C1,C2)) ], Lu, Lu1), !.
+evolue((I,C), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls1) :- 			concat([ (I,C) ], Ls, Ls1), !.
+evolue((I,not(C)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls1) :- 		concat([ (I,not(C)) ], Ls, Ls1), !.
 
 
 
@@ -59,16 +82,6 @@ evolue((I,not(C)), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1) :- 		concat(
 resolution(Lie, Lpt, Li, Lu, Ls, Abr) :- 	.
 
 
-deduction_all(Lie, [ (I1,all(R,C)) | Lpt], Li, Lu, Ls, Abr) :- 	
-			member((I1,I2,R), Abr),
-			
-			evolue((I2,C), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
-			
-			deduction_all(Lie1, Lpt, Li1, Lu1, Ls1, Abr), !.
-
-
-
-transformation_or(Lie,Lpt,Li,Lu,Ls,Abr) :- 	.
-
-
 affiche_evolution_Abox(Ls1, Lie1, Lpt1, Li1, Lu1, Abr1, Ls2, Lie2, Lpt2, Li2, Lu2, Abr2) :- .
+
+clash() :- .
