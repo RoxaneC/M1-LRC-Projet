@@ -104,6 +104,8 @@ affiche((I,and(C1,C2))) :-	write(I), write(' : '),
 							write(C1), write(' ⊓ '), write(C2), !.
 affiche((I,or(C1,C2))) :-	write(I), write(' : '),
 							write(C1), write(' ⊔ '), write(C2), !.
+affiche((I,C)) :-	write(I), write(' : '), write(C1), !.
+affiche((I,not(C))) :-	write(I), write(' : ¬'), write(C), !.
 
 % récursivité
 affiche([Elem | L]) :-	affiche(Elem), write(', '),
