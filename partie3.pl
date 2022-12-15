@@ -122,8 +122,12 @@ affiche((I,and(C1,C2))) :-	write(I), write(' : ('),
 affiche((I,or(C1,C2))) :-	write(I), write(' : ('),
 							affiche(C1), write(' ⊔ '), affiche(C2), write(')'), !.
 
-%% A FAIRE
+% résolution
+resolution(Lie, Lpt, Li, Lu, Ls, Abr) :-	not(clash(Ls)), complete_some(Lie, Lpt, Li, Lu, Ls, Abr), !.
+resolution([], Lpt, Li, Lu, Ls, Abr) :-	not(clash(Ls)), transformation_and([], Lpt, Li, Lu, Ls, Abr), !.
+resolution([], Lpt, [], Lu, Ls, Abr) :-	not(clash(Ls)), deduction_all([], Lpt, [], Lu, Ls, Abr), !.
+resolution([], [], [], Lu, Ls, Abr):-	not(clash(Ls)), transformation_or([], [], [], Lu, Ls, Abr), !.
+resolution([], [], [], [], Ls, Abr):-	not(clash(Ls)).
 
-resolution(Lie, Lpt, Li, Lu, Ls, Abr) :- 	.
-
-clash() :- .
+clash([]).
+clash([(I,C) | Ls]) :-	member((I,not(C)), Ls), clash(Ls).
