@@ -106,7 +106,7 @@ remplace(all(R, CNA), all(R, CA)) :- 	remplace(CNA, CA), !.
 % - mise sous nnf
 
 traitement_Tbox([], []).
-traitement_Tbox([(C,D) | Tbox], [(NC,ND) | L]) :- 	concept(C), concept(D),
+traitement_Tbox([(C,D) | Tbox], [(NC,ND) | L]) :- 	concept(C), concept(D), not(autoref(C,D)),
 													remplace(C,CA), remplace(D,DA),
 													nnf(CA, NC), nnf(DA,ND),
 													traitement_Tbox(Tbox, L), !.
@@ -129,4 +129,4 @@ traitement_AboxI([(I,C) | AboxI], [(I,NC) | L] ) :-	instance(I), concept(C),
 
 traitement_AboxR([]).
 traitement_AboxR([(I1,I2,R) | AboxR]) :-	instance(I1), instance(I2), role(R),
-										traitement_AboxR(AboxR), !.
+											traitement_AboxR(AboxR), !.

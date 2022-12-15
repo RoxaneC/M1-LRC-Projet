@@ -36,10 +36,11 @@ resolution([], Lpt, [], Lu, Ls, Abr) :-	pas_clash(Ls), deduction_all([], Lpt, []
 resolution([], [], [], Lu, Ls, Abr):-	pas_clash(Ls), transformation_or([], [], [], Lu, Ls, Abr), !.
 resolution([], [], [], [], Ls, Abr):-	pas_clash(Ls), !.
 
+
 % Vérifie la présence d'un clash
 
 pas_clash([]).
-pas_clash([(I,C) | Ls]) :-	not(member((I,not(C)), Ls)), pas_clash(Ls), !.
+pas_clash([(I,C) | Ls]) :-	nnf(not(C), NC), not(member((I,NC), Ls)), pas_clash(Ls).
 
 
 % Cas "il existe"
