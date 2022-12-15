@@ -99,7 +99,7 @@ evolue([Elem | L], Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1) :-
 
 evolue((I,some(R,C)), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt, Li, Lu, Ls) :- 	concat([ (I,some(R,C)) ], Lie, Lie1), !.
 evolue((I,all(R,C)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt1, Li, Lu, Ls) :- 	concat([ (I,all(R,C)) ], Lpt, Lpt1), !.
-evolue((I,and(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li1, Lu, Ls) :- 	concat([ (I,and(C1,C2)) ], Li1, Li1), !.
+evolue((I,and(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li1, Lu, Ls) :- 	concat([ (I,and(C1,C2)) ], Li, Li1), !.
 evolue((I,or(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu1, Ls) :- 	concat([ (I,or(C1,C2)) ], Lu, Lu1), !.
 evolue((I,C), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls1) :- 			concat([ (I,C) ], Ls, Ls1), !.
 evolue((I,not(C)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls1) :- 		concat([ (I,not(C)) ], Ls, Ls1), !.
@@ -137,7 +137,7 @@ affiche([Elem | L]) :-	affiche(Elem), nl,
 % affichage des concepts
 affiche(C) :- write(C), !.
 affiche((I1,I2,R)) :-	write('<'), write(I1), write(','), write(I2), write('> : '), write(R), !.
-affiche((I,C)) :-	write(I), write(' : '), affiche(C1), !.
+affiche((I,C)) :-	write(I), write(' : '), affiche(C), !.
 affiche((I,not(C))) :-	write(I), write(' : ¬('), affiche(C), write(')'), !.
 affiche((I,some(R,C))) :-	write(I), write(' : ∃ '),
 							write(R), write('.('), affiche(C), write(')'), !.

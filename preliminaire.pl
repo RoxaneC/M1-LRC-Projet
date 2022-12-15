@@ -16,7 +16,7 @@ nnf(not(X), not(X)) :- !.
 nnf(and(C1,C2), and(NC1,NC2)) :- nnf(C1,NC1), nnf(C2,NC2), !.
 nnf(or(C1,C2), or(NC1,NC2)) :- nnf(C1,NC1), nnf(C2,NC2), !.
 nnf(some(R,C), some(R,NC)) :- nnf(C,NC), !.
-nnf(all(R,C), all(R,NC)tri_Abox) :- nnf(C,NC), !.
+nnf(all(R,C), all(R,NC)) :- nnf(C,NC), !.
 nnf(X,X).
 
 

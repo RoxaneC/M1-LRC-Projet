@@ -80,7 +80,7 @@ role(R) :-	rname(R), !.
 % On verifie qu'il n'y a pas de cycle
 
 autoref(C, C).
-autoref(C, D) :- autoref(C,D), developper(C,D), !.
+autoref(C, D) :- autoref(C,DA), developper(D,DA), !.
 autoref(C, and(A,B)) :-	autoref(C,A), autoref(C,B), !.
 autoref(C, or(A,B)) :-	autoref(C,A), autoref(C,B), !.
 autoref(C, some(R,B)) :-	autoref(C,B), !.
@@ -92,7 +92,7 @@ autoref(C, all(R,B)) :-	autoref(C,B), !.
 % Remplace les concepts non atomiques par une definition formée uniquement de concepts atomiques
 
 remplace(CA, CA) :- cnamea(CA), !.
-remplace(CNA, DCA) :- equiv(CNA, D), remplace(D, DCA) !.
+remplace(CNA, DCA) :- equiv(CNA, D), remplace(D, DCA), !.
 remplace(not(CNA), not(CA)) :- 	remplace(CNA, CA), !.
 remplace(or(CNA1, CNA2), or(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
 remplace(and(CNA1, CNA2), and(CA1, CA2)) :- 	remplace(CNA1, CA1), remplace(CNA2, CA2), !.
